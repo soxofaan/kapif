@@ -4,6 +4,8 @@ import os
 import time
 
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
+from fastapi.staticfiles import StaticFiles
 
 log = logging.getLogger(__name__)
 
@@ -20,6 +22,7 @@ async def poll_load():
         timestamp = int(time.time())
         cpu_load = os.getloadavg()
         load_db.append((timestamp, cpu_load))
+        # TODO: make sleep delay configurable
         await asyncio.sleep(5)
 
 
@@ -31,13 +34,17 @@ async def on_startup():
     asyncio.ensure_future(poll_load())
 
 
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+
 @app.get("/")
 async def index():
-    return {
-        "message": "hello world",
-    }
+    return RedirectResponse(url='/static/index.html')
 
 
 @app.get("/cpu_load")
 def get_cpu_load():
-    return {"loads": load_db}
+    return {
+        "loads": load_db,
+        "series": ["load1", "load5", "load15"]
+    }
