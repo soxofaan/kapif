@@ -13,9 +13,11 @@ log = logging.getLogger(__name__)
 
 app = FastAPI()
 
+
+# TODO: get config from command line or external file?
 config = {
     "database": "kapif.db",
-    "poll_sleep": 10,
+    "poll_sleep": 60,
 }
 
 
