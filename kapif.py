@@ -23,7 +23,7 @@ async def poll_load():
         cpu_load = os.getloadavg()
         load_db.append((timestamp, cpu_load))
         # TODO: make sleep delay configurable
-        await asyncio.sleep(5)
+        await asyncio.sleep(60)
 
 
 @app.on_event("startup")
