@@ -13,7 +13,6 @@ log = logging.getLogger(__name__)
 
 app = FastAPI()
 
-
 # TODO: get config from command line or external file?
 config = {
     "database": "kapif.db",
@@ -37,6 +36,7 @@ def db_setup():
         if "cpu_load" not in tables:
             log.info("Creating table cpu_load")
             con.execute("CREATE table cpu_load(ts INT, load1 REAL, load5 REAL, load15 REAL)")
+            # TODO: index on ts?
             con.commit()
 
 
@@ -72,10 +72,12 @@ async def index():
 
 @app.get("/cpu_load")
 def get_cpu_load():
+    # TODO: also poll load when handling this request?
     with db() as con:
+        since = int(time.time() - 24 * 60 * 60)
         loads = [
             (row[0], row[1:])
-            for row in con.execute("SELECT * FROM cpu_load").fetchall()
+            for row in con.execute("SELECT * FROM cpu_load WHERE ts > ?", (since,)).fetchall()
         ]
     return {
         "loads": loads,
