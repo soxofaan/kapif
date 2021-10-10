@@ -1,3 +1,6 @@
+![status - alpha](https://img.shields.io/badge/status-alpha-red)
+
+
 # Kapif - simple CPU load monitoring tool
 
 Kapif is a very simple CPU load monitoring tool. There is just a single process that polls for the CPU load, stores that
