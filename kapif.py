@@ -83,3 +83,13 @@ def get_cpu_load():
         "loads": loads,
         "series": ["load1", "load5", "load15"]
     }
+
+
+@app.get("/info")
+async def info():
+    with db() as con:
+        db_stats = con.execute("SELECT COUNT(*), min(ts), max(ts) FROM cpu_load").fetchone()
+    return {
+        "poll_sleep": config["poll_sleep"],
+        "db_stats": {"rows": db_stats[0], "first": db_stats[1], "last": db_stats[2]}
+    }
